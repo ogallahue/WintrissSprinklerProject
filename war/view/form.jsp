@@ -1,15 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=US-ASCII"
+	pageEncoding="US-ASCII"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="../stylesheet/main.css">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <title>Create Schedule</title>
 </head>
-<body bgcolor="#FFFFFF">
+<body>
 	<h1>Create Your Schedule Here</h1>
 
-	<form action="edit" method="post">
+	<form id="form" action="edit" method="post">
 		<table>
 			<tr>
 				<td>Master On:</td>
@@ -25,14 +25,14 @@
 		<hr />
 		<br />
 		<!-- Schedule 1 -->
-		<table border="1" bgcolor="#FFFFFF">
+		<table border="1">
 			<tr>
 				<td><b>Schedule 1 On:</b></td>
-				<td><input type="radio" name="on_off00" value="on"></td>
+				<td><input type="radio" name="00_on_off" value="on"></td>
 			</tr>
 			<tr>
 				<td><b>Schedule 1 Off:</b></td>
-				<td><input type="radio" name="on_off00" value="off" checked></td>
+				<td><input type="radio" name="00_on_off" value="off" checked></td>
 			</tr>
 
 		</table>
@@ -40,19 +40,19 @@
 		<table border="1">
 			<tr>
 				<td><b>Day of Week:</b>&nbsp;</td>
-				<td>Sunday <input type="checkbox" name="sun00">
+				<td>Sunday <input type="checkbox" name="00_dow0">
 				</td>
-				<td>Monday <input type="checkbox" name="mon00">
+				<td>Monday <input type="checkbox" name="00_dow1">
 				</td>
-				<td>Tuesday <input type="checkbox" name="tue00">
+				<td>Tuesday <input type="checkbox" name="00_dow2">
 				</td>
-				<td>Wednesday <input type="checkbox" name="wed00">
+				<td>Wednesday <input type="checkbox" name="00_dow3">
 				</td>
-				<td>Thursday <input type="checkbox" name="thu00">
+				<td>Thursday <input type="checkbox" name="00_dow4">
 				</td>
-				<td>Friday <input type="checkbox" name="fri00">
+				<td>Friday <input type="checkbox" name="00_dow5">
 				</td>
-				<td>Saturday <input type="checkbox" name="sat00">
+				<td>Saturday <input type="checkbox" name="00_dow6">
 				</td>
 			</tr>
 		</table>
@@ -60,12 +60,12 @@
 		<table border="1">
 			<tr>
 				<td><b>Zone:</b>&nbsp;</td>
-				<td>1 <input type="checkbox" name="zone0000"></td>
-				<td>2 <input type="checkbox" name="zone0001"></td>
-				<td>3 <input type="checkbox" name="zone0002"></td>
-				<td>4 <input type="checkbox" name="zone0003"></td>
-				<td>5 <input type="checkbox" name="zone0004"></td>
-				<td>6 <input type="checkbox" name="zone0005"></td>
+				<td>1 <input type="checkbox" name="00_zone00"></td>
+				<td>2 <input type="checkbox" name="00_zone01"></td>
+				<td>3 <input type="checkbox" name="00_zone02"></td>
+				<td>4 <input type="checkbox" name="00_zone03"></td>
+				<td>5 <input type="checkbox" name="00_zone04"></td>
+				<td>6 <input type="checkbox" name="00_zone05"></td>
 			</tr>
 		</table>
 		<br />
@@ -73,11 +73,11 @@
 			<tr>
 
 				<td><b>Time On:</b></td>
-				<td><input type="time" name="time0000"></td>
+				<td><input type="time" name="00_time_on"></td>
 			</tr>
 			<tr>
 				<td><b>Time Off:</b></td>
-				<td><input type="time" name="time0001"></td>
+				<td><input type="time" name="00_time_off"></td>
 
 			</tr>
 		</table>
@@ -87,32 +87,32 @@
 		<!-- Schedule 2 -->
 		<table border="1">
 			<tr>
-				<td><b>Schedule 2 On:</b></td>
-				<td><input type="radio" name="on_off01" value="on"></td>
+				<td><b>Schedule 2</b></td>
+				<td>ON <input type="radio" name="01_on_off" value="on"></td>
+				<td>OFF <input type="radio" name="01_on_off" value="off" checked></td>
 			</tr>
-			<tr>
+			<!-- <tr>
 				<td><b>Schedule 2 Off:</b></td>
-				<td><input type="radio" name="on_off01" value="off" checked></td>
-			</tr>
+			</tr> -->
 
 		</table>
 		<br />
 		<table border="1">
 			<tr>
 				<td><b>Day of Week:</b>&nbsp;</td>
-				<td>Sunday <input type="checkbox" name="sun01">
+				<td>Sunday <input type="checkbox" name="01_dow0">
 				</td>
-				<td>Monday <input type="checkbox" name="mon01">
+				<td>Monday <input type="checkbox" name="01_dow1">
 				</td>
-				<td>Tuesday <input type="checkbox" name="tue01">
+				<td>Tuesday <input type="checkbox" name="01_dow2">
 				</td>
-				<td>Wednesday <input type="checkbox" name="wed01">
+				<td>Wednesday <input type="checkbox" name="01_dow3">
 				</td>
-				<td>Thursday <input type="checkbox" name="thu01">
+				<td>Thursday <input type="checkbox" name="01_dow4">
 				</td>
-				<td>Friday <input type="checkbox" name="fri01">
+				<td>Friday <input type="checkbox" name="01_dow5">
 				</td>
-				<td>Saturday <input type="checkbox" name="sat01">
+				<td>Saturday <input type="checkbox" name="01_dow6">
 				</td>
 			</tr>
 		</table>
@@ -120,12 +120,12 @@
 		<table border="1">
 			<tr>
 				<td><b>Zone:</b>&nbsp;</td>
-				<td>1 <input type="checkbox" name="zone0100"></td>
-				<td>2 <input type="checkbox" name="zone0101"></td>
-				<td>3 <input type="checkbox" name="zone0102"></td>
-				<td>4 <input type="checkbox" name="zone0103"></td>
-				<td>5 <input type="checkbox" name="zone0104"></td>
-				<td>6 <input type="checkbox" name="zone0105"></td>
+				<td>1 <input type="checkbox" name="01_zone00"></td>
+				<td>2 <input type="checkbox" name="01_zone01"></td>
+				<td>3 <input type="checkbox" name="01_zone02"></td>
+				<td>4 <input type="checkbox" name="01_zone03"></td>
+				<td>5 <input type="checkbox" name="01_zone04"></td>
+				<td>6 <input type="checkbox" name="01_zone05"></td>
 			</tr>
 		</table>
 		<br />
@@ -133,11 +133,11 @@
 			<tr>
 
 				<td><b>Time On:</b></td>
-				<td><input type="time" name="time0100"></td>
+				<td><input type="time" name="01_time_on"></td>
 			</tr>
 			<tr>
 				<td><b>Time Off:</b></td>
-				<td><input type="time" name="time0101"></td>
+				<td><input type="time" name="01_time_off"></td>
 
 			</tr>
 		</table>
@@ -148,11 +148,11 @@
 		<table border="1">
 			<tr>
 				<td><b>Schedule 3 On:</b></td>
-				<td><input type="radio" name="on_off02" value="on"></td>
+				<td><input type="radio" name="02_on_off" value="on"></td>
 			</tr>
 			<tr>
 				<td><b>Schedule 3 Off:</b></td>
-				<td><input type="radio" name="on_off02" value="off" checked></td>
+				<td><input type="radio" name="02_on_off" value="off" checked></td>
 			</tr>
 
 		</table>
@@ -160,19 +160,19 @@
 		<table border="1">
 			<tr>
 				<td><b>Day of Week:</b>&nbsp;</td>
-				<td>Sunday <input type="checkbox" name="sun02">
+				<td>Sunday <input type="checkbox" name="02_dow0">
 				</td>
-				<td>Monday <input type="checkbox" name="mon02">
+				<td>Monday <input type="checkbox" name="02_dow1">
 				</td>
-				<td>Tuesday <input type="checkbox" name="tue02">
+				<td>Tuesday <input type="checkbox" name="02_dow2">
 				</td>
-				<td>Wednesday <input type="checkbox" name="wed02">
+				<td>Wednesday <input type="checkbox" name="02_dow3">
 				</td>
-				<td>Thursday <input type="checkbox" name="thu02">
+				<td>Thursday <input type="checkbox" name="02_dow4">
 				</td>
-				<td>Friday <input type="checkbox" name="fri02">
+				<td>Friday <input type="checkbox" name="02_dow5">
 				</td>
-				<td>Saturday <input type="checkbox" name="sat02">
+				<td>Saturday <input type="checkbox" name="02_dow6">
 				</td>
 			</tr>
 		</table>
@@ -180,12 +180,12 @@
 		<table border="1">
 			<tr>
 				<td><b>Zone:</b>&nbsp;</td>
-				<td>1 <input type="checkbox" name="zone0200"></td>
-				<td>2 <input type="checkbox" name="zone0201"></td>
-				<td>3 <input type="checkbox" name="zone0202"></td>
-				<td>4 <input type="checkbox" name="zone0203"></td>
-				<td>5 <input type="checkbox" name="zone0204"></td>
-				<td>6 <input type="checkbox" name="zone0205"></td>
+				<td>1 <input type="checkbox" name="02_zone00"></td>
+				<td>2 <input type="checkbox" name="02_zone01"></td>
+				<td>3 <input type="checkbox" name="02_zone02"></td>
+				<td>4 <input type="checkbox" name="02_zone03"></td>
+				<td>5 <input type="checkbox" name="02_zone04"></td>
+				<td>6 <input type="checkbox" name="02_zone05"></td>
 			</tr>
 		</table>
 		<br />
@@ -193,19 +193,20 @@
 			<tr>
 
 				<td><b>Time On:</b></td>
-				<td><input type="time" name="time0200"></td>
+				<td><input type="time" name="02_time_on"></td>
 			</tr>
 			<tr>
 				<td><b>Time Off:</b></td>
-				<td><input type="time" name="time0201"></td>
+				<td><input type="time" name="02_time_off"></td>
 
 			</tr>
 		</table>
 		<br />
 		<hr />
-
-		<input type="submit" value="Submit">
+		Add a schedule: <input type="checkbox" name="add_schedule">
 		<hr />
+		<input type="submit" value="Submit">
 	</form>
+
 </body>
 </html>

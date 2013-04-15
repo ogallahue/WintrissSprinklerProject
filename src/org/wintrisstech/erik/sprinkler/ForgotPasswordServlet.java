@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -20,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class ForgotPasswordServlet extends HttpServlet {
+	
+	private static final Logger logger = Logger.getLogger(ForgotPasswordServlet.class
+			.getName());
+
 
 	private static final String ERROR_MESSAGE = "No user with that email was found.";
 	private static final String EMAIL_ATTRIBUTE = "email";
@@ -39,11 +45,12 @@ public class ForgotPasswordServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		String errorMessage = null;
 		if ((errorMessage = validateEmail(email)) == null) {
-			User user = UserDataAccess.findUserByEmail(email);
+			User user = UserDataAccess.getUserByEmail(email);
 			if (user != null) {
 				String link = null;
 				try {
 					link = PasswordResetServlet.getPasswordResetLink(user.getId());
+					logger.log(Level.INFO, "link = {0}", link);
 					// send an email to the user
 					Properties props = new Properties();
 					Session session = Session.getDefaultInstance(props, null);
@@ -62,7 +69,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 					Message message = new MimeMessage(session);
 					message.setFrom(new InternetAddress(
 							"noreply@sprinklerwiz.appspotmail.com",
-							"System adminstrator"));
+							"System administrator"));
 					message.setReplyTo(null);
 					message.addRecipient(Message.RecipientType.TO,
 							new InternetAddress(email));
@@ -86,7 +93,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 		request.setAttribute(ERROR_ATTRIBUTE, errorMessage);
 
 		RequestDispatcher view = request
-				.getRequestDispatcher("/view/login.jsp");
+				.getRequestDispatcher("/view/forgot_password.jsp");
 		view.forward(request, response);
 	}
 

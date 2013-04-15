@@ -21,16 +21,15 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
  */
 public class CookieEncoder {
 
-	private static final Logger logger = Logger.getLogger(UserDataAccess.class
+	private static final Logger logger = Logger.getLogger(CookieEncoder.class
 			.getName());
-
-	private static final MemcacheService keyCache = MemcacheServiceFactory
-			.getMemcacheService();
 
 	private static SecureRandom random = new SecureRandom();
 	public static final long TIMESTAMP_UNIT = 24L * 3600000L; // 24 hours
 	private static final String TIMESTAMP_ID = "timestamp_id";
 	private static final String[] COOKIE_ID = { "cookie_id_1", "cookie_id_2" };
+	private static final MemcacheService keyCache = MemcacheServiceFactory
+			.getMemcacheService();
 
 	/**
 	 * Checks that a cookie is valid.
@@ -40,16 +39,15 @@ public class CookieEncoder {
 	 * @return true if the cookie is valid
 	 */
 	public static boolean check(Cookie cookie) {
-		long now = System.currentTimeMillis() / TIMESTAMP_UNIT;
+		long timestamp = System.currentTimeMillis() / TIMESTAMP_UNIT;
 		String[] value = cookie.getValue().split("\\|");
-//		logger.log(Level.INFO, "Cookie value = {0}", Arrays.toString(value));
 		String s = null;
 		String hmac = null;
 		if (value.length == 2 && (s = value[0]) != null
 				&& (hmac = value[1]) != null) {
 			try {
-				return hmac.equals(getHmac(s, now))
-						|| hmac.equals(getHmac(s, now - 1));
+				return hmac.equals(getHmac(s, timestamp))
+						|| hmac.equals(getHmac(s, timestamp - 1));
 			} catch (InvalidKeyException e) {
 			} catch (NoSuchAlgorithmException e) {
 			}
@@ -113,7 +111,6 @@ public class CookieEncoder {
 		}
 		if (cookies != null) {
 			for (Cookie c : cookies) {
-				logger.log(Level.INFO, "Cookie value = {0}", c.getValue());
 				if (name.equals(c.getName()) && CookieEncoder.check(c)) {
 					return CookieEncoder.decode(c);
 				}

@@ -13,7 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 /**
- * A servlet that handles registration requests.
+ * A servlet that handles password reset requests.
  * 
  * @author ecolban
  * 
@@ -21,7 +21,7 @@ import javax.servlet.http.*;
 @SuppressWarnings("serial")
 public class PasswordResetServlet extends HttpServlet {
 	private static final long TIMESTAMP_UNIT = 24L * 3600000L; // 1 day
-	private static final String LINK_SECRET = "L1nK S3crt"; // Not very secure!!
+	private static final String LINK_SECRET = "L1nK S3crt"; // Not very smart!!
 
 	private static final Logger logger = Logger
 			.getLogger(PasswordResetServlet.class.getName());
@@ -51,7 +51,7 @@ public class PasswordResetServlet extends HttpServlet {
 		try {
 			long id = getId(request);
 			if (id > 0) {
-				User user = UserDataAccess.getUser(id);
+				User user = UserDataAccess.getUserById(id);
 				if (user != null) {
 					RequestDispatcher view = request
 							.getRequestDispatcher("/view/password_reset.jsp");
@@ -87,7 +87,7 @@ public class PasswordResetServlet extends HttpServlet {
 					return;
 				}
 			} else {
-				User user = UserDataAccess.getUser(id);
+				User user = UserDataAccess.getUserById(id);
 				if (user != null) {
 					userName = user.getUserName();
 					request.setAttribute("username", userName);
@@ -101,15 +101,6 @@ public class PasswordResetServlet extends HttpServlet {
 		RequestDispatcher view = request
 				.getRequestDispatcher("/view/password_reset.jsp");
 		view.forward(request, response);
-		try {
-			hacker();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private long getId(HttpServletRequest request) throws InvalidKeyException,
@@ -167,13 +158,8 @@ public class PasswordResetServlet extends HttpServlet {
 			throws InvalidKeyException, NoSuchAlgorithmException {
 		long timestamp = System.currentTimeMillis() / TIMESTAMP_UNIT;
 		String hmac = getHmac(id, timestamp);
-		logger.log(Level.SEVERE, hmac);
 		return "/reset/" + id + "_" + hmac;
 
-	}
-	
-	public static void hacker() throws InvalidKeyException, NoSuchAlgorithmException{
-		getPasswordResetLink(12001);
 	}
 
 	private static String getHmac(long id, long timestamp)
@@ -182,19 +168,16 @@ public class PasswordResetServlet extends HttpServlet {
 				.substring(0, 52).toLowerCase();
 	}
 
-	public static boolean checkPasswordResetLink(long id2, String uri) {
+	private static boolean checkPasswordResetLink(long id2, String uri) {
 		long timestamp = System.currentTimeMillis() / TIMESTAMP_UNIT;
 		Matcher m = URI_PATTERN.matcher(uri);
 		if (m.matches()) {
 			try {
 				long id = Long.parseLong(m.group(1));
-				logger.log(Level.INFO, "Id = {0}", id);
 				if (id != id2) {
-					logger.log(Level.INFO, "Id = {0} did not match.", id);
 					return false;
 				}
 				String hmac = m.group(2);
-				logger.log(Level.INFO, "Id = {0} did not match.", id);
 				return hmac.equals(getHmac(id, timestamp))
 						|| hmac.equals(getHmac(id, timestamp - 1));
 

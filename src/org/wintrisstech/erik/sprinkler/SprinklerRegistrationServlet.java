@@ -3,12 +3,13 @@ package org.wintrisstech.erik.sprinkler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+//import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 /**
- * A servlet that handles requests for the welcome page.
+ * A servlet that handles requests for registering a sprinkler.
  * 
  * @author ecolban
  * 
@@ -16,8 +17,8 @@ import javax.servlet.http.*;
 @SuppressWarnings("serial")
 public class SprinklerRegistrationServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(WelcomeServlet.class
-			.getName());
+	private static final Logger logger = Logger
+			.getLogger(SprinklerRegistrationServlet.class.getName());
 
 	/**
 	 * The name of an attribute used to hold the user name.
@@ -40,7 +41,7 @@ public class SprinklerRegistrationServlet extends HttpServlet {
 			throws IOException, ServletException {
 		Cookie[] cookies = request.getCookies();
 		long id = User.getId(cookies);
-		User user = UserDataAccess.getUser(id);
+		User user = UserDataAccess.getUserById(id);
 		if (user != null) {
 			String userName = user.getUserName();
 			if (userName != null) {
@@ -70,7 +71,7 @@ public class SprinklerRegistrationServlet extends HttpServlet {
 			throws IOException, ServletException {
 		Cookie[] cookies = request.getCookies();
 		long id = User.getId(cookies);
-		User user = UserDataAccess.getUser(id);
+		User user = UserDataAccess.getUserById(id);
 		String sprinklerName = request.getParameter(SPRINKLER_NAME_PARAM);
 		String userName = null;
 		String errorMessage = null;
@@ -82,16 +83,16 @@ public class SprinklerRegistrationServlet extends HttpServlet {
 			if (sprinklerName != null) {
 				// validate the sprinkler name
 				if ((errorMessage = validateSprinklerName(sprinklerName)) == null) {
-//					try {
-						user.setSprinklerName(sprinklerName);
-						UserDataAccess.updateUser(user);
-//						Cookie cookie = User.getCookie(id);
-//						response.addCookie(cookie);
-						response.sendRedirect("/");
-						return;
-//					} catch (InvalidKeyException e) {
-//					} catch (NoSuchAlgorithmException e) {
-//					}
+					// try {
+					user.setSprinklerName(sprinklerName);
+					UserDataAccess.updateUser(user);
+					// Cookie cookie = User.getCookie(id);
+					// response.addCookie(cookie);
+					response.sendRedirect("/");
+					return;
+					// } catch (InvalidKeyException e) {
+					// } catch (NoSuchAlgorithmException e) {
+					// }
 				}
 			}
 		}

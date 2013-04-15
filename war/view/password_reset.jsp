@@ -12,10 +12,12 @@
 </head>
 <body>
 	<%
+		pageContext.setAttribute("username", request
+				.getAttribute(RegistrationServlet.USERNAME_ATTRIBUTE));
 		pageContext.setAttribute("error",
 				request.getAttribute(RegistrationServlet.ERROR_ATTRIBUTE));
 	%>
-	<h1 class="main-title">Re-enter Password</h1>
+	<h1 class="main-title">Re-enter Password for ${username}</h1>
 	<form method="post">
 		<table>
 

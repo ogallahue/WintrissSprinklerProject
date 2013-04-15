@@ -16,7 +16,7 @@ import javax.servlet.http.*;
 @SuppressWarnings("serial")
 public class ScheduleIdServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(WelcomeServlet.class
+	private static final Logger logger = Logger.getLogger(ScheduleIdServlet.class
 			.getName());
 
 	/**
@@ -29,7 +29,7 @@ public class ScheduleIdServlet extends HttpServlet {
 			throws IOException, ServletException {
 		Cookie[] cookies = request.getCookies();
 		long id = User.getId(cookies);
-		User user = UserDataAccess.getUser(id);
+		User user = UserDataAccess.getUserById(id);
 		if (user != null) {
 			String scheduleId = user.getScheduleId();
 			PrintWriter out = response.getWriter();

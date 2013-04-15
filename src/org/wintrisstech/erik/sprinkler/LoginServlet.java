@@ -3,6 +3,8 @@ package org.wintrisstech.erik.sprinkler;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -11,6 +13,9 @@ import javax.servlet.http.*;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet {
+	
+	private static final Logger logger = Logger
+			.getLogger(LoginServlet.class.getName());
 
 	/**
 	 * Error message to display if the user types an invalid user name or

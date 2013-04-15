@@ -71,12 +71,8 @@ public class UserDataAccess {
 	 */
 	public static long addUser(String username, String password, String email)
 			throws UnsupportedEncodingException {
-		Entity userAlreadyInDatastore = findUserEntityByName(username);
+		Entity userAlreadyInDatastore = findUserEntity(username);
 		if (userAlreadyInDatastore != null) {
-			return 0L;
-		}
-		Entity userWithSameEmail = findUserEntityByEmail(email);
-		if (userWithSameEmail != null) {
 			return 0L;
 		}
 		Entity entity = new Entity(USER_KIND);
@@ -98,8 +94,7 @@ public class UserDataAccess {
 		long id = key.getId();
 		User user = new User(id, username, email, null, null);
 		keyCache.put(Long.valueOf(id), user);
-		logger.log(Level.INFO,
-				"Added new user with id = {0} to the data store.", id);
+		logger.log(Level.INFO, "Added new user to the data store.");
 		return id;
 	}
 
@@ -116,7 +111,7 @@ public class UserDataAccess {
 	 * @return a User instance
 	 */
 	public static User getUser(String userName, String password) {
-		Entity user = findUserEntityByName(userName);
+		Entity user = findUserEntity(userName);
 		if (user != null) {
 			boolean passwordOK;
 			try {
@@ -145,7 +140,7 @@ public class UserDataAccess {
 	 *            the given id.
 	 * @return the User instance or null if not found
 	 */
-	public static User getUser(long id) {
+	public static User getUserById(long id) {
 		if (id <= 0) {
 			return null;
 		}
@@ -197,7 +192,7 @@ public class UserDataAccess {
 			userEntity.setProperty(SCHEDULE_ID_PROPERTY, user.getScheduleId());
 			datastore.put(userEntity);
 			keyCache.put(Long.valueOf(user.getId()), user);
-			logger.log(Level.INFO, "Updated user with id = {0}", user.getId());
+			logger.log(Level.INFO, "Updated user with id = {0}.", user.getId());
 		}
 	}
 
@@ -219,7 +214,7 @@ public class UserDataAccess {
 	 *            the given user name
 	 * @return returns the found entity, if found, or null otherwise.
 	 */
-	private static Entity findUserEntityByName(String username) {
+	private static Entity findUserEntity(String username) {
 		logger.log(Level.INFO, "Querying the datastore for {0}.", username);
 		Query query = new Query(USER_KIND);
 		query.setFilter(new FilterPredicate(USERNAME_PROPERTY,
@@ -233,36 +228,31 @@ public class UserDataAccess {
 		}
 	}
 
-	private static Entity findUserEntityByEmail(String email) {
-		logger.log(Level.INFO,
-				"Querying the datastore for user with email = {0}.", email);
+	public static User getUserByEmail(String email) {
+		logger.log(Level.INFO, "Querying the datastore for email = {0}.", email);
 		Query query = new Query(USER_KIND);
 		query.setFilter(new FilterPredicate(EMAIL_PROPERTY,
 				FilterOperator.EQUAL, email));
 		List<Entity> users = datastore.prepare(query).asList(
 				FetchOptions.Builder.withLimit(1));
 		if (users != null && users.size() > 0) {
-			return users.get(0);
+			Entity userEntity = users.get(0);
+			if (userEntity != null) {
+				User user = new User((long) userEntity.getKey().getId(),
+						(String) userEntity.getProperty(USERNAME_PROPERTY),
+						(String) userEntity.getProperty(EMAIL_PROPERTY),
+						(String) userEntity
+								.getProperty(SPRINKLER_NAME_PROPERTY),
+						(String) userEntity.getProperty(SCHEDULE_ID_PROPERTY));
+				return user;
+			}
 		}
 		return null;
 	}
 
-	public static User findUserByEmail(String email) {
-		Entity userEntity = findUserEntityByEmail(email);
-		if (userEntity != null) {
-			User user = new User((long) userEntity.getKey().getId(),
-					(String) userEntity.getProperty(USERNAME_PROPERTY),
-					(String) userEntity.getProperty(EMAIL_PROPERTY),
-					(String) userEntity.getProperty(SPRINKLER_NAME_PROPERTY),
-					(String) userEntity.getProperty(SCHEDULE_ID_PROPERTY));
-			return user;
-		}
-		return null;
-	}
-
-	public static void setPassword(long id, String password)
+	public static void setPassword(long id, String password) 
 			throws UnsupportedEncodingException {
-
+		
 		Key key = KeyFactory.createKey(USER_KIND, id);
 		Entity entity = null;
 		try {
@@ -276,11 +266,11 @@ public class UserDataAccess {
 					new ShortBlob(Crypto.computeHmac(password, salt)));
 			entity.setProperty(SALT_PROPERTY, new ShortBlob(salt));
 			key = datastore.put(entity);
-			logger.log(Level.INFO, "Password reset for user with id = {0}", id);
+			logger.log(Level.INFO, "Updated the password of user with id = {0}", id);
 		} catch (InvalidKeyException e) {
 			return;
 		} catch (NoSuchAlgorithmException e) {
-			return;
+			return ;
 		}
 	}
 

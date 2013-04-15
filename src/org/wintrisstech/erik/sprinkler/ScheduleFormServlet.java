@@ -1,85 +1,151 @@
 package org.wintrisstech.erik.sprinkler;
 
 import java.io.IOException;
-
+import java.io.PrintWriter;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@SuppressWarnings("serial")
 public class ScheduleFormServlet extends HttpServlet {
+	private static final String ATT_MASTER_ON_OFF = "master_on_off";
 
-	private static final String TIME_ERROR = "error";
-
-	/**
-	 * @param args
-	 */
-
-	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		RequestDispatcher view = request
-				.getRequestDispatcher("/view/form.jsp");
+		RequestDispatcher view = request.getRequestDispatcher("/view/form.jsp");
 		response.setContentType("text/html");
 		view.forward(request, response);
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		List<String> timeParameterNames = new ArrayList<String>();
-		Pattern timeParameterNamePattern = Pattern.compile("time\\d{4}");
 
-		@SuppressWarnings("unchecked")
 		Enumeration<String> parameterNames = request.getParameterNames();
+		List<String> parameterNameList = new ArrayList<String>();
+
 		while (parameterNames.hasMoreElements()) {
-			String name = parameterNames.nextElement();
-			Matcher m = timeParameterNamePattern.matcher(name);
-			if (m.matches()) {
-				timeParameterNames.add(name);
-			}
+			parameterNameList.add(parameterNames.nextElement());
 		}
-		boolean isError = false;
-		for (String p : timeParameterNames) {
-			String error = validateTimeParameter(request.getParameter(p));
-			if (error != null) {
-				isError = true;
-				break;
+		Collections.sort(parameterNameList);
+		PrintWriter printer = response.getWriter();
+
+		for (String parameterName : parameterNameList) {
+			printer.print(parameterName);
+			printer.println(" = " + request.getParameter(parameterName));
+		}
+
+		// create the attributes
+		for (String s : parameterNameList) {
+			String attributeName = "ATT_" + s.toUpperCase();
+			request.setAttribute(attributeName, request.getParameter(s));
+		}
+		// validate all parameters
+		// Pattern timeParameterPattern =
+		// Pattern.compile("\\d\\d_time_(on|off)");
+		// for (String s : parameterNameList) {
+		// Matcher m = timeParameterPattern.matcher(s);
+		// if (m.matches()) {
+		// boolean timeValueOK = validateTimeParameter(s,
+		// request.getParameter(s));
+		// if (!timeValueOK) {
+		// printer.println(s + " = " + request.getParameter(s));
+		// }
+		// }
+		//
+		// }
+		ScheduleErrorChecker scheduleErrorChecker = new ScheduleErrorChecker();
+		scheduleErrorChecker.checkForErrors(parameterNameList, request);
+		if (scheduleErrorChecker.hasError()) {
+			for (String s : scheduleErrorChecker.getErrorMessages()) {
+				printer.println("<br/>");
+				printer.println(s);
+
+			}
+			RequestDispatcher view = request
+					.getRequestDispatcher("/view/schedule_error_page.jsp");
+			view.forward(request, response);
+			
+
+		} else {
+
+		}
+		// store all parameter values in the data store
+		for (String prefix : new String[] { "00", "01", "02" }) {
+			if (isDefinedSchedule(prefix, request)) {
+				Schedule schedule = new Schedule();
+				schedule.setTime(request.getParameter(prefix + "_time_on"),
+						request.getParameter(prefix + "_time_off"));
+				boolean[] DOW = new boolean[7];
+				for (int i = 0; i < 7; i++) {
+					DOW[i] = request.getParameter(prefix + "_dow" + i) != null
+							&& request.getParameter(prefix + "_dow" + i)
+									.equals("on");
+				}
+				schedule.setDOW(DOW);
+				boolean[] zones = new boolean[6];
+				for (int i = 0; i < 6; i++) {
+					zones[i] = request.getParameter(prefix + "_zone0" + i) != null
+							&& request.getParameter(prefix + "_zone0" + i)
+									.equals("on");
+				}
+				schedule.setZones(zones);
+				schedule.setOnOff(request.getParameter(prefix + "_on_off") != null
+						&& request.getParameter(prefix + "_on_off")
+								.equals("on"));
 			}
 		}
 
-		response.setContentType("text/plain");
-		response.getWriter().println(
-				"This form has " + (isError ? "errors." : "no errors."));
-		RequestDispatcher view = request
-				.getRequestDispatcher("/view/signup.jsp");
-		view.forward(request, response);
 	}
 
-	private String validateTimeParameter(String parameter) {
-		Pattern timePattern = Pattern.compile("(\\d\\d):(\\d\\d)(:(\\d\\d))?");
-		Matcher m = timePattern.matcher(parameter);
+	private boolean isDefinedSchedule(String prefix, HttpServletRequest request) {
+		String timeOn = request.getParameter(prefix + "_time_on");
+		String timeOff = request.getParameter(prefix + "_time_off");
+
+		return timeOn != null && !timeOn.isEmpty() && timeOff != null
+				&& !timeOff.isEmpty();
+	}
+
+	private boolean validateTimeParameter(String parameterName,
+			String parameterValue) {
+		Pattern timeParameterPattern = Pattern.compile("\\d\\d_time_(on|off)");
+		Pattern timeValuePattern = Pattern
+				.compile("(\\d?\\d):(\\d\\d)(:(\\d\\d))?");
+
+		Matcher m = timeParameterPattern.matcher(parameterName);
 		if (m.matches()) {
-			int hours = Integer.parseInt(m.group(1));
-			int minutes = Integer.parseInt(m.group(2));
-			int seconds = 0;
+			Matcher timeMatcher = timeValuePattern.matcher(parameterValue);
+			if (timeMatcher.matches()) {
+				int hours = 0;
+				int minutes = 0;
+				int seconds = 0;
+				hours = Integer.parseInt(timeMatcher.group(1));
+				minutes = Integer.parseInt(timeMatcher.group(2));
+				if (timeMatcher.group(4) != null) {
+					seconds = Integer.parseInt(timeMatcher.group(4));
+				}
+				if (0 <= hours && hours <= 23 && 0 <= minutes && minutes <= 59
+						&& 0 <= seconds && seconds <= 59) {
+					return true;
+				}
+			}
 
-			if (m.groupCount() > 2) {
-				seconds = Integer.parseInt(m.group(3));
-			}
-			if (0 <= hours && hours < 24 && 0 <= minutes && minutes < 60
-					&& 0 <= seconds && seconds < 60) {
-				return null;
-			}
 		}
-		return TIME_ERROR;
+
+		return false;
+
 	}
+
 }

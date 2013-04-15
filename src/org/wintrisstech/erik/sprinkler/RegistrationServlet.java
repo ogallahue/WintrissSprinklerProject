@@ -137,8 +137,7 @@ public class RegistrationServlet extends HttpServlet {
 	 * Checks if the two passwords provided are equal
 	 * @param password the password
 	 * @param verify the password verification
-	 * @return an error message if the password is not valid, or null if it is
-	 *         valid.
+	 * @return true if the two passwords are equal
 	 */
 	private String validateVerify(String password, String verify) {
 		// Ensure that password is not when this method is called.

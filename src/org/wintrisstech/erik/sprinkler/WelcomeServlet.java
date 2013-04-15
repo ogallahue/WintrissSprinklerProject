@@ -31,24 +31,23 @@ public class WelcomeServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		Cookie[] cookies = request.getCookies();
-		long id = User.getId(cookies);
-		logger.log(Level.INFO, "Access by user with id = {0}", id);
-		User user = UserDataAccess.getUser(id);
-		if (user != null) {
-			String userName = user.getUserName();
-			if (userName != null) {
+		if (cookies != null) {
+			long id = User.getId(cookies);
+			logger.log(Level.INFO, "Access by user with id = {0}", id);
+			User user = UserDataAccess.getUserById(id);
+			if (user != null) {
+				String userName = user.getUserName();
 				logger.log(Level.INFO, "Access by user {0}", userName);
-				request.setAttribute(USERNAME_ATTRIBUTE, "" + userName);
-			} else {
-				logger.log(Level.WARNING, "Received cookie with id = {0}. No user with this id.", id);
-			}
-			String sprinklerName = user.getSprinklerName();
-			if (sprinklerName != null) {
-				request.setAttribute(SPRINKLER_NAME_ATTRIBUTE, ""
-						+ sprinklerName);
+				if (userName != null) {
+					request.setAttribute(USERNAME_ATTRIBUTE, "" + userName);
+				}
+				String sprinklerName = user.getSprinklerName();
+				if (sprinklerName != null) {
+					request.setAttribute(SPRINKLER_NAME_ATTRIBUTE, ""
+							+ sprinklerName);
+				}
 			}
 		}
-
 		RequestDispatcher view = request
 				.getRequestDispatcher("/view/welcome.jsp");
 		response.setContentType("text/html");

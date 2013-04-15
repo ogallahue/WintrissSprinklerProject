@@ -2,15 +2,21 @@ package org.wintrisstech.erik.sprinkler;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 
-import org.apache.commons.codec.binary.Base32;
+
+//import org.apache.commons.codec.binary.Base32;
+//import org.apache.commons.codec.binary.Base64;
+
+
 
 /**
  * Utility class used for message authentication code generation and validation.
@@ -20,7 +26,7 @@ import org.apache.commons.codec.binary.Base32;
  */
 public class Crypto {
 
-	// private static Logger logger = Logger.getLogger(Crypto.class.getName());
+	 private static Logger logger = Logger.getLogger(Crypto.class.getName());
 
 	/**
 	 * Computes the Hash-based Message Authentication Code (HMAC) for a given

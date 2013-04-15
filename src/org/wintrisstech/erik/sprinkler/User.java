@@ -21,9 +21,9 @@ import org.apache.commons.codec.binary.Base32;
  */
 public class User implements Serializable {
 
-	private static final Logger logger = Logger.getLogger(UserDataAccess.class
-			.getName());
-	
+	private static final Logger logger = Logger
+			.getLogger(User.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	private final static Pattern USERNAME_PATTERN = Pattern
@@ -75,8 +75,6 @@ public class User implements Serializable {
 		this.scheduleId = schedule;
 	}
 
-	
-
 	public static boolean isValidUsername(String username) {
 		Matcher m = USERNAME_PATTERN.matcher(username);
 		return m.matches();
@@ -89,14 +87,10 @@ public class User implements Serializable {
 
 	public static long getId(Cookie[] cookies) {
 		String value = CookieEncoder.getCookieValue(cookies, COOKIE_NAME);
-//		logger.log(Level.INFO, "Cookie value = {0}", value);
-		if (value != null) {
-			try {
-				long id = Long.parseLong(value);
-				return id;
-			} catch (NumberFormatException ex) {
-				return 0;
-			}
+		try {
+			long id = Long.parseLong(value);
+			return id;
+		} catch (NumberFormatException ex) {
 		}
 		return 0;
 	}
