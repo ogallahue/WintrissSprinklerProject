@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class ScheduleErrorChecker {
 	ArrayList<String> errorMessages = new ArrayList<String>();
 	HashMap<String,String> fieldToUserMessage  =  new HashMap<String,String>();
+
+	public final static String ERROR_MESSAGES_ATTRIBUTE = "error messages";
 
 	public ScheduleErrorChecker() {
 		fieldToUserMessage.put("00_time_on", "Schedule 1 Time On");
@@ -39,9 +43,12 @@ public class ScheduleErrorChecker {
 				if (!timeValueOK) {
 					errorMessages.add( "Please change " + fieldToUserMessage.get(s) + " to follow the format HH:MM:SS");
 				}
+				
 			}
 
 		}
+		request.setAttribute(ERROR_MESSAGES_ATTRIBUTE,  errorMessages);
+
 	}
 	
 	// Please change "attributeName" time code to look like this HH:MM:ss
